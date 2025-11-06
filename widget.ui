@@ -29,7 +29,7 @@
       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -37,7 +37,7 @@
         <enum>QLayout::SizeConstraint::SetFixedSize</enum>
        </property>
        <item>
-        <widget class="QToolButton" name="toolButton">
+        <widget class="QToolButton" name="openbtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -45,12 +45,12 @@
           </size>
          </property>
          <property name="text">
-          <string>pushButton</string>
+          <string>开启关闭</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="lightbtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -58,12 +58,12 @@
           </size>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>开灯</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="waterbtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -71,12 +71,12 @@
           </size>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>浇水</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="autobtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -84,12 +84,12 @@
           </size>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>自动（客机模式）</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_5">
+        <widget class="QPushButton" name="mysqlbtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -97,12 +97,12 @@
           </size>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>数据库</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="debugbtn">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -110,7 +110,20 @@
           </size>
          </property>
          <property name="text">
-          <string>PushButton</string>
+          <string>调试</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exitbtn">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>退出系统</string>
          </property>
         </widget>
        </item>
@@ -156,38 +169,38 @@
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>IP地址</string>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit"/>
+                  <widget class="QLineEdit" name="iplineEdit"/>
                  </item>
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_3">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>端口号</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_2"/>
+                  <widget class="QLineEdit" name="portlineEdit"/>
                  </item>
                 </layout>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <widget class="QToolButton" name="toolButton_2">
+                  <widget class="QToolButton" name="modebtn">
                    <property name="text">
                     <string>.....</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_26">
+                  <widget class="QLabel" name="patternlab">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>主机模式</string>
                    </property>
                   </widget>
                  </item>
@@ -199,9 +212,9 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_27">
+                  <widget class="QLabel" name="connectlab">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>未连接</string>
                    </property>
                   </widget>
                  </item>
@@ -240,56 +253,56 @@
                  <item row="3" column="0">
                   <widget class="QLabel" name="label_10">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>土壤温度</string>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="1">
                   <widget class="QLabel" name="label_11">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>土壤含水量</string>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="1">
                   <widget class="QLabel" name="label_5">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>空气相对湿度</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="2">
-                  <widget class="QLabel" name="label_15">
+                  <widget class="QLabel" name="ray">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0%</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLabel" name="label_8">
+                  <widget class="QLabel" name="airwater">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0%</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="2">
-                  <widget class="QLabel" name="label_9">
+                  <widget class="QLabel" name="oxygen">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0%</string>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_4">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>空气温度</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="label_7">
+                  <widget class="QLabel" name="airtem">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0°C</string>
                    </property>
                   </widget>
                  </item>
@@ -303,28 +316,28 @@
                  <item row="0" column="2">
                   <widget class="QLabel" name="label_6">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>氧气浓度</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QLabel" name="label_14">
+                  <widget class="QLabel" name="soilwater">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0%</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QLabel" name="label_13">
+                  <widget class="QLabel" name="soiltem">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>0°C</string>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="2">
                   <widget class="QLabel" name="label_12">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>光照强度</string>
                    </property>
                   </widget>
                  </item>
@@ -354,104 +367,104 @@
                  <item>
                   <layout class="QGridLayout" name="gridLayout_3">
                    <item row="0" column="0">
-                    <widget class="QCheckBox" name="checkBox">
+                    <widget class="QCheckBox" name="airtemcb">
                      <property name="text">
                       <string>空气温度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="0" column="1">
-                    <widget class="QLineEdit" name="lineEdit_3"/>
+                    <widget class="QLineEdit" name="airtemLE"/>
                    </item>
                    <item row="0" column="2">
                     <widget class="QLabel" name="label_17">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>°C</string>
                      </property>
                     </widget>
                    </item>
                    <item row="1" column="0">
-                    <widget class="QCheckBox" name="checkBox_2">
+                    <widget class="QCheckBox" name="airwatercb">
                      <property name="text">
                       <string>空气相对湿度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QLineEdit" name="lineEdit_4"/>
+                    <widget class="QLineEdit" name="airwaterLE"/>
                    </item>
                    <item row="1" column="2">
                     <widget class="QLabel" name="label_18">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>%</string>
                      </property>
                     </widget>
                    </item>
                    <item row="2" column="0">
-                    <widget class="QCheckBox" name="checkBox_3">
+                    <widget class="QCheckBox" name="oxygencb">
                      <property name="text">
                       <string>氧气浓度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="2" column="1">
-                    <widget class="QLineEdit" name="lineEdit_5"/>
+                    <widget class="QLineEdit" name="oxygenLE"/>
                    </item>
                    <item row="2" column="2">
                     <widget class="QLabel" name="label_19">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>%</string>
                      </property>
                     </widget>
                    </item>
                    <item row="3" column="0">
-                    <widget class="QCheckBox" name="checkBox_6">
+                    <widget class="QCheckBox" name="soiltemcb">
                      <property name="text">
                       <string>土壤温度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="3" column="1">
-                    <widget class="QLineEdit" name="lineEdit_6"/>
+                    <widget class="QLineEdit" name="soiltemLE"/>
                    </item>
                    <item row="3" column="2">
                     <widget class="QLabel" name="label_20">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>°C</string>
                      </property>
                     </widget>
                    </item>
                    <item row="4" column="0">
-                    <widget class="QCheckBox" name="checkBox_5">
+                    <widget class="QCheckBox" name="soilwatercb">
                      <property name="text">
                       <string>土壤含水量</string>
                      </property>
                     </widget>
                    </item>
                    <item row="4" column="1">
-                    <widget class="QLineEdit" name="lineEdit_7"/>
+                    <widget class="QLineEdit" name="soilwaterLE"/>
                    </item>
                    <item row="4" column="2">
                     <widget class="QLabel" name="label_21">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>%</string>
                      </property>
                     </widget>
                    </item>
                    <item row="5" column="0">
-                    <widget class="QCheckBox" name="checkBox_4">
+                    <widget class="QCheckBox" name="raycb">
                      <property name="text">
                       <string>光照强度</string>
                      </property>
                     </widget>
                    </item>
                    <item row="5" column="1">
-                    <widget class="QLineEdit" name="lineEdit_8"/>
+                    <widget class="QLineEdit" name="rayLE"/>
                    </item>
                    <item row="5" column="2">
                     <widget class="QLabel" name="label_22">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string>%</string>
                      </property>
                     </widget>
                    </item>
@@ -489,7 +502,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="horizontalSlider">
+                 <widget class="QSlider" name="raySlider">
                   <property name="orientation">
                    <enum>Qt::Orientation::Horizontal</enum>
                   </property>
@@ -541,7 +554,7 @@
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QSpinBox" name="spinBox">
+                 <widget class="QSpinBox" name="waterspinBox">
                   <property name="minimumSize">
                    <size>
                     <width>100</width>
@@ -581,7 +594,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QFrame" name="frame_4">
+             <widget class="QFrame" name="charFrame1">
               <property name="minimumSize">
                <size>
                 <width>800</width>
@@ -603,7 +616,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_5">
+             <widget class="QFrame" name="charFrame2">
               <property name="minimumSize">
                <size>
                 <width>800</width>
@@ -636,25 +649,25 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>pushButton_2</tabstop>
-  <tabstop>pushButton_3</tabstop>
-  <tabstop>pushButton_4</tabstop>
-  <tabstop>pushButton_5</tabstop>
-  <tabstop>pushButton_6</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>lineEdit_3</tabstop>
-  <tabstop>checkBox_2</tabstop>
-  <tabstop>lineEdit_4</tabstop>
-  <tabstop>checkBox_3</tabstop>
-  <tabstop>lineEdit_5</tabstop>
-  <tabstop>checkBox_6</tabstop>
-  <tabstop>lineEdit_6</tabstop>
-  <tabstop>checkBox_5</tabstop>
-  <tabstop>lineEdit_7</tabstop>
-  <tabstop>checkBox_4</tabstop>
-  <tabstop>lineEdit_8</tabstop>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>lineEdit_2</tabstop>
+  <tabstop>lightbtn</tabstop>
+  <tabstop>waterbtn</tabstop>
+  <tabstop>mysqlbtn</tabstop>
+  <tabstop>debugbtn</tabstop>
+  <tabstop>exitbtn</tabstop>
+  <tabstop>airtemcb</tabstop>
+  <tabstop>airtemLE</tabstop>
+  <tabstop>airwatercb</tabstop>
+  <tabstop>airwaterLE</tabstop>
+  <tabstop>oxygencb</tabstop>
+  <tabstop>oxygenLE</tabstop>
+  <tabstop>soiltemcb</tabstop>
+  <tabstop>soiltemLE</tabstop>
+  <tabstop>soilwatercb</tabstop>
+  <tabstop>soilwaterLE</tabstop>
+  <tabstop>raycb</tabstop>
+  <tabstop>rayLE</tabstop>
+  <tabstop>iplineEdit</tabstop>
+  <tabstop>portlineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

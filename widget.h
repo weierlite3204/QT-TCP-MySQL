@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "mytcpserver.h"
+#include "msgworker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,5 +21,10 @@ public:
 
 private:
     Ui::Widget *ui;
+    unsigned int port=1210;//端口号
+    MyTcpServer *msgserver=NULL;//tcp服务
+
+private slots:
+    void do_msgnewConnection(qintptr socket);
 };
 #endif // WIDGET_H

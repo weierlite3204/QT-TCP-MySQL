@@ -11,12 +11,18 @@ CONFIG += c++17
 SOURCES += \
     debugging.cpp \
     main.cpp \
+    msgworker.cpp \
     mysql.cpp \
+    mytcpserver.cpp \
+    tcpdata.cpp \
     widget.cpp
 
 HEADERS += \
     debugging.h \
+    msgworker.h \
     mysql.h \
+    mytcpserver.h \
+    tcpdata.h \
     widget.h
 
 FORMS += \

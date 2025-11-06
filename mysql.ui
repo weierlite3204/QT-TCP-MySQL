@@ -6,13 +6,229 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>711</width>
-    <height>636</height>
+    <width>890</width>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>数据库管理平台</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="datetable"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>日期查询</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>开始</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="3">
+             <widget class="QDateTimeEdit" name="dateTimeON"/>
+            </item>
+            <item row="0" column="4">
+             <widget class="QPushButton" name="inquire">
+              <property name="text">
+               <string>查询</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>结束</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="3">
+             <widget class="QDateTimeEdit" name="dateTimeOFF"/>
+            </item>
+            <item row="1" column="4">
+             <widget class="QPushButton" name="nowtime">
+              <property name="text">
+               <string>现在时间</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QPushButton" name="oneday">
+              <property name="text">
+               <string>最近一天</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="threeday">
+              <property name="text">
+               <string>最近三天</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3" colspan="2">
+             <widget class="QPushButton" name="aweek">
+              <property name="text">
+               <string>最近一周</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="exit">
+         <property name="text">
+          <string>退出</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteall">
+         <property name="text">
+          <string>清空数据</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="showall">
+         <property name="text">
+          <string>显示所有数据</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QFrame" name="frame_2">
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>值查询</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="dateinquire">
+          <property name="text">
+           <string>点击查询</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>查询属性</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboBox">
+          <item>
+           <property name="text">
+            <string>空气温度</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>空气相对湿度</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>氧气浓度</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>土壤温度</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>土壤含水量</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>光照强度</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>最小值</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="maxlineEdit"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>最大值</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEdit_2"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
