@@ -13,6 +13,9 @@ Widget::Widget(QWidget *parent)
     msgserver->listen(QHostAddress::Any,port);//监听端口
     // 连接服务器的newDescriptor信号到Widget的do_msgnewConnection槽函数
     connect(msgserver, &MyTcpServer::newDescriptor, this, &Widget::do_msgnewConnection);
+    
+    // 初始化图表
+    initCharts();
 }
 
 //有客户端连接到消息服务器
@@ -35,12 +38,27 @@ void Widget::do_msgnewConnection(qintptr socket)//处理客户端msgsocket的连
     connect(worker,&MsgWorker::showsensordata,this,&Widget::showdata);//发送信号，让接收到的数据显示在界面上
 }
 
-void Widget::showdata(SensorData)
+void Widget::initCharts()
 {
+
+}
+
+void Widget::showdata(SensorData data)
+{
+    // 更新主界面数据监控部分的各个控件
+    ui->airtem->setText(QString::number(data.atemp, 'f', 1) + "°C");    // 空气温度
+    ui->airwater->setText(QString::number(data.ahumi, 'f', 1) + "%");  // 空气相对湿度
+    ui->oxygen->setText(QString::number(data.oxygen, 'f', 1) + "%");   // 氧气浓度
+    ui->soiltem->setText(QString::number(data.stemp, 'f', 1) + "°C");   // 土壤温度
+    ui->soilwater->setText(QString::number(data.shumi2, 'f', 1) + "%"); // 土壤含水量
+    ui->ray->setText(QString::number(data.light, 'f', 1) + "%");       // 光照强度
+    
 
 }
 
 Widget::~Widget()
 {
+
+    
     delete ui;
 }

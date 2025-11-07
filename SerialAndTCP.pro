@@ -1,4 +1,9 @@
-QT       += core gui sql charts network serialport
+QT       += core gui sql network serialport printsupport
+
+# 添加QCustomPlot支持
+INCLUDEPATH += $$PWD
+HEADERS += $$PWD/qcustomplot.h
+SOURCES += $$PWD/qcustomplot.cpp
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
