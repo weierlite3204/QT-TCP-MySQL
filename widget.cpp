@@ -2,48 +2,14 @@
 #include "ui_widget.h"
 #include <QNetworkInterface>
 #include <QMessageBox>
+#include <QTimer>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    deb = new debugging();
-    deb->show(); // 显示调试窗口
-    msgserver=new MyTcpServer(this);//创建Tcp服务器对象
-    //QHostAddress::Any //双栈任意地址。以这种地址绑定的套接字将同时监听两个端口。 一。
-    msgserver->listen(QHostAddress::Any,port);//监听端口
-    // 连接服务器的newDescriptor信号到Widget的do_msgnewConnection槽函数
-    connect(msgserver, &MyTcpServer::newDescriptor, this, &Widget::do_msgnewConnection);
-    
-    // 获取并显示本地IPv4地址，便于复制连接
-    QString ipAddress = "";
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-    
-    // 寻找第一个非环回IPv4地址
-    for (int i = 0; i < ipAddressesList.size(); ++i) {
-        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
-            ipAddressesList.at(i).toIPv4Address()) {
-            ipAddress = ipAddressesList.at(i).toString();
-            break;
-        }
-    }
-    
-    // 如果没有找到非环回地址，使用环回地址
-    if (ipAddress.isEmpty()) {
-        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
-    }
-    
-    // 设置iplineEdit为可复制的IP地址
-    ui->iplineEdit->setText(ipAddress);
-    ui->iplineEdit->setReadOnly(true); 
-    
-    // 初始化图表
-    initCharts();
-
-    //当端口行编辑完成之后，更改服务器监听的端口
-    connect(ui->portlineEdit,&QLineEdit::editingFinished,this,&Widget::portchange);
-    
+    init();
 }
 
 //有客户端连接到消息服务器
@@ -162,8 +128,56 @@ void Widget::initCharts()
     layout2->addWidget(customPlot2);
 }
 
+void Widget::init()
+{
+    deb = new debugging();
+    deb->show(); // 显示调试窗口
+    msgserver=new MyTcpServer(this);//创建Tcp服务器对象
+    //QHostAddress::Any //双栈任意地址。以这种地址绑定的套接字将同时监听两个端口。 一。
+    msgserver->listen(QHostAddress::Any,port);//监听端口
+    // 连接服务器的newDescriptor信号到Widget的do_msgnewConnection槽函数
+    connect(msgserver, &MyTcpServer::newDescriptor, this, &Widget::do_msgnewConnection);
 
-//接收到数据之后，把数据显示在主界面上
+    // 获取并显示本地IPv4地址，便于复制连接
+    QString ipAddress = "";
+    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+    // 寻找第一个非环回IPv4地址
+    for (int i = 0; i < ipAddressesList.size(); ++i) {
+        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
+            ipAddressesList.at(i).toIPv4Address()) {
+            ipAddress = ipAddressesList.at(i).toString();
+            break;
+        }
+    }
+    // 如果没有找到非环回地址，使用环回地址
+    if (ipAddress.isEmpty()) {
+        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+    }
+    // 设置iplineEdit为可复制的IP地址
+    ui->iplineEdit->setText(ipAddress);
+    ui->iplineEdit->setReadOnly(true);
+    // 初始化图表
+    initCharts();
+
+    // 设置raySlider的范围和初始值
+    // 滑动条范围设为0-1950，用于映射到50-2000 μmol/m²
+    ui->raySlider->setRange(0, 1950);
+    ui->raySlider->setValue(0); // 默认在最小值位置
+
+    // 初始化raylabel显示
+    ui->raylabel->setText("50 μmol/m²");
+
+    //当端口行编辑完成之后，更改服务器监听的端口
+    connect(ui->portlineEdit,&QLineEdit::editingFinished,this,&Widget::portchange);
+    // 连接滑动条值变化信号到lambda函数，更新raylabel显示
+    connect(ui->raySlider, &QSlider::valueChanged, [=](int value) {
+        // 将0-1950映射到50-2000 μmol/m²
+        int mappedValue = 50 + value;
+        ui->raylabel->setText(QString::number(mappedValue) + " μmol/m²");
+    });
+}
+
+//接收到数据之后，将数据展示到主界面中
 void Widget::showdata(SensorData data)
 {
     // 更新主界面数据监控部分的各个控件
@@ -237,7 +251,46 @@ void Widget::showdata(SensorData data)
 
 void Widget::portchange()
 {
-
+    // 获取用户输入的端口号
+    QString portText = ui->portlineEdit->text();
+    bool ok;//用于指示字符串到无符号整数的转换是否成功
+    unsigned int newPort = portText.toUInt(&ok);//如果转换失败，ok = 0
+    
+    // 验证端口是否在有效范围内（1-65535）
+    if (!ok || newPort < 1 || newPort > 65535) {
+        // 端口无效，显示错误信息
+        ui->portlineEdit->setText("端口输入有误");
+        // 设置样式，让错误提示更明显
+        ui->portlineEdit->setStyleSheet("color: red; background-color: #FFE0E0;");
+        
+        // 使用定时器，一段时间后恢复原始端口显示
+        QTimer::singleShot(2000, [=]() {
+            ui->portlineEdit->setText(QString::number(port));
+            ui->portlineEdit->setStyleSheet("");
+        });
+        return;
+    }
+    
+    // 端口有效，恢复正常样式
+    ui->portlineEdit->setStyleSheet("");
+    
+    // 如果端口号没有变化，不需要重新监听
+    if (newPort == port) {
+        return;
+    }
+    
+    // 停止当前的服务器监听
+    if (msgserver && msgserver->isListening()) {
+        msgserver->close();
+    }
+    
+    // 更新端口号
+    port = newPort;
+    
+    // 重新开始监听新端口
+    if (msgserver) {
+        msgserver->listen(QHostAddress::Any, port);
+    }
 }
 
 Widget::~Widget()

@@ -51,6 +51,8 @@ private:
     
     // 初始化图表函数
     void initCharts();
+    //界面初始化函数
+    void init();
 
 private slots:
     void do_msgnewConnection(qintptr socket);//有客户端连接到消息服务器

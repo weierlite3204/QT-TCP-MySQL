@@ -100,7 +100,7 @@ public:
     QVBoxLayout *verticalLayout_5;
     QLabel *label_24;
     QSlider *raySlider;
-    QLabel *label_25;
+    QLabel *raylabel;
     QGridLayout *gridLayout_4;
     QLabel *label_28;
     QSpinBox *waterspinBox;
@@ -466,13 +466,13 @@ public:
 
         verticalLayout_5->addWidget(raySlider);
 
-        label_25 = new QLabel(widget);
-        label_25->setObjectName("label_25");
-        label_25->setMinimumSize(QSize(0, 30));
-        label_25->setMaximumSize(QSize(16777215, 30));
-        label_25->setAlignment(Qt::AlignmentFlag::AlignCenter);
+        raylabel = new QLabel(widget);
+        raylabel->setObjectName("raylabel");
+        raylabel->setMinimumSize(QSize(0, 30));
+        raylabel->setMaximumSize(QSize(16777215, 30));
+        raylabel->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
-        verticalLayout_5->addWidget(label_25);
+        verticalLayout_5->addWidget(raylabel);
 
 
         horizontalLayout_3->addLayout(verticalLayout_5);
@@ -580,6 +580,7 @@ public:
         label->setText(QCoreApplication::translate("Widget", "\347\275\221\347\273\234\350\277\236\346\216\245", nullptr));
         label_2->setText(QCoreApplication::translate("Widget", "IP\345\234\260\345\235\200", nullptr));
         label_3->setText(QCoreApplication::translate("Widget", "\347\253\257\345\217\243\345\217\267", nullptr));
+        portlineEdit->setText(QCoreApplication::translate("Widget", "1210", nullptr));
         modebtn->setText(QCoreApplication::translate("Widget", ".....", nullptr));
         patternlab->setText(QCoreApplication::translate("Widget", "\344\270\273\346\234\272\346\250\241\345\274\217", nullptr));
         connectlab->setText(QCoreApplication::translate("Widget", "\346\234\252\350\277\236\346\216\245", nullptr));
@@ -610,7 +611,7 @@ public:
         raycb->setText(QCoreApplication::translate("Widget", "\345\205\211\347\205\247\345\274\272\345\272\246", nullptr));
         label_22->setText(QCoreApplication::translate("Widget", "%", nullptr));
         label_24->setText(QCoreApplication::translate("Widget", "\345\205\211\347\205\247\345\274\272\345\272\246", nullptr));
-        label_25->setText(QCoreApplication::translate("Widget", "%", nullptr));
+        raylabel->setText(QCoreApplication::translate("Widget", "%", nullptr));
         label_28->setText(QCoreApplication::translate("Widget", "\345\226\267\346\260\264\346\227\266\351\227\264", nullptr));
         label_29->setText(QCoreApplication::translate("Widget", "S", nullptr));
     } // retranslateUi
