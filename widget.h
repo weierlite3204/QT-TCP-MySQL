@@ -55,5 +55,6 @@ private:
 private slots:
     void do_msgnewConnection(qintptr socket);//有客户端连接到消息服务器
     void showdata(SensorData);//把接收到的数据在ui界面中展示出来
+    void portchange();//用户修改主机端口
 };
 #endif // WIDGET_H

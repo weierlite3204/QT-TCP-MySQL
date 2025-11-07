@@ -40,6 +40,9 @@ Widget::Widget(QWidget *parent)
     
     // 初始化图表
     initCharts();
+
+    //当端口行编辑完成之后，更改服务器监听的端口
+    connect(ui->portlineEdit,&QLineEdit::editingFinished,this,&Widget::portchange);
     
 }
 
@@ -68,6 +71,7 @@ void Widget::do_msgnewConnection(qintptr socket)//处理客户端msgsocket的连
     connect(worker,&MsgWorker::showsensordata,this,&Widget::showdata);//发送信号，让接收到的数据显示在界面上
 }
 
+//初始化图表
 void Widget::initCharts()
 {
     // 清除frame的布局（如果有）
@@ -158,6 +162,8 @@ void Widget::initCharts()
     layout2->addWidget(customPlot2);
 }
 
+
+//接收到数据之后，把数据显示在主界面上
 void Widget::showdata(SensorData data)
 {
     // 更新主界面数据监控部分的各个控件
@@ -227,6 +233,11 @@ void Widget::showdata(SensorData data)
     // 重绘图表
     customPlot1->replot(QCustomPlot::rpQueuedReplot);
     customPlot2->replot(QCustomPlot::rpQueuedReplot);
+}
+
+void Widget::portchange()
+{
+
 }
 
 Widget::~Widget()
