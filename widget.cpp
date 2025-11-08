@@ -130,8 +130,10 @@ void Widget::initCharts()
 
 void Widget::init()
 {
+    // 创建调试窗口但默认隐藏
     deb = new debugging();
-    deb->show(); // 显示调试窗口
+    deb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
+    
     msgserver=new MyTcpServer(this);//创建Tcp服务器对象
     //QHostAddress::Any //双栈任意地址。以这种地址绑定的套接字将同时监听两个端口。 一。
     msgserver->listen(QHostAddress::Any,port);//监听端口
@@ -183,6 +185,111 @@ void Widget::init()
     });
 }
 
+// 简单的输入验证函数，检查是否为有效数字
+bool Widget::isValidNumber(const QString &input)
+{
+    if (input.isEmpty()) {
+        return false;
+    }
+    
+    // 移除空格并检查是否全为数字和小数点
+    QString trimmed = input.trimmed();
+    if (trimmed.isEmpty()) {
+        return false;
+    }
+    
+    // 检查每个字符是否为数字或小数点（仅允许一个小数点）
+    int dotCount = 0;
+    for (int i = 0; i < trimmed.length(); ++i) {
+        QChar c = trimmed.at(i);
+        if (c == '.') {
+            dotCount++;
+            if (dotCount > 1) {
+                return false;
+            }
+        } else if (!c.isDigit()) {
+            return false;
+        }
+    }
+    
+    // 小数点不能在开头或结尾
+    if (trimmed.startsWith('.') || trimmed.endsWith('.')) {
+        return false;
+    }
+    
+    return true;
+}
+
+// 检查所有报警阈值
+void Widget::checkAlarmThresholds(const SensorData &data)
+{
+    // 空气温度阈值检查
+    if (ui->airtemcb->isChecked()) {
+        QString input = ui->airtemLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.atemp > threshold) {
+                QMessageBox::warning(this, "警报", "空气温度超过设定阈值！");
+            }
+        }
+    }
+    
+    // 空气相对湿度阈值检查
+    if (ui->airwatercb->isChecked()) {
+        QString input = ui->airwaterLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.ahumi > threshold) {
+                QMessageBox::warning(this, "警报", "空气相对湿度超过设定阈值！");
+            }
+        }
+    }
+    
+    // 氧气浓度阈值检查
+    if (ui->oxygencb->isChecked()) {
+        QString input = ui->oxygenLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.oxygen > threshold) {
+                QMessageBox::warning(this, "警报", "氧气浓度超过设定阈值！");
+            }
+        }
+    }
+    
+    // 土壤温度阈值检查
+    if (ui->soiltemcb->isChecked()) {
+        QString input = ui->soiltemLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.stemp > threshold) {
+                QMessageBox::warning(this, "警报", "土壤温度超过设定阈值！");
+            }
+        }
+    }
+    
+    // 土壤含水量阈值检查
+    if (ui->soilwatercb->isChecked()) {
+        QString input = ui->soilwaterLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.shumi2 > threshold) {
+                QMessageBox::warning(this, "警报", "土壤含水量超过设定阈值！");
+            }
+        }
+    }
+    
+    // 光照强度阈值检查
+    if (ui->raycb->isChecked()) {
+        QString input = ui->rayLE->text();
+        if (isValidNumber(input)) {
+            double threshold = input.toDouble();
+            if (data.light > threshold) {
+                QMessageBox::warning(this, "警报", "光照强度超过设定阈值！");
+            }
+        }
+    }
+}
+
 //接收到数据之后，将数据展示到主界面中
 void Widget::showdata(SensorData data)
 {
@@ -193,6 +300,9 @@ void Widget::showdata(SensorData data)
     ui->soiltem->setText(QString::number(data.stemp, 'f', 1) + "°C");   // 土壤温度
     ui->soilwater->setText(QString::number(data.shumi2, 'f', 1) + "%"); // 土壤含水量
     ui->ray->setText(QString::number(data.light, 'f', 1) + "%");       // 光照强度
+    
+    // 调用报警阈值检查函数
+    checkAlarmThresholds(data);
     
     // 获取当前时间
     double currentTime = QDateTime::currentDateTime().toMSecsSinceEpoch() / 1000.0;
@@ -320,28 +430,30 @@ void Widget::on_lightbtn_clicked()
 
 void Widget::on_waterbtn_clicked()
 {
-    // 切换浇水状态
-    water = !water;
-    
-    if (water) {
-        // 开始浇水
-        ui->waterbtn->setText("关水");
-        
+    // 如果当前是关闭状态，点击要开始浇水
+    if (!water) {
         // 获取waterspinBox中设置的秒数
         int seconds = ui->waterspinBox->value();
         
-        // 设置定时器，在指定秒数后自动关水
-        QTimer::singleShot(seconds * 1000, this, [this]() {
+        // 开始浇水
+        water = true;
+        ui->waterbtn->setText("关水");
+        
+        // 只有当浇水时间大于0秒时，才设置定时器自动关水
+        if (seconds > 0) {
+            QTimer::singleShot(seconds * 1000, this, [this]() {
             if (water) { // 只有在仍然浇水状态时才执行自动关水
                 water = false;
                 ui->waterbtn->setText("浇水");
                 // 这里可以添加实际控制关水的代码，例如发送指令到下位机
             }
         });
+        }
         
         // 这里可以添加实际控制浇水的代码，例如发送指令到下位机
     } else {
         // 停止浇水
+        water = false;
         ui->waterbtn->setText("浇水");
         // 这里可以添加实际控制关水的代码，例如发送指令到下位机
     }
@@ -385,5 +497,35 @@ Widget::~Widget()
     soilHumidityData.clear();
     lightData.clear();
     
+    // 安全删除调试窗口
+    if (deb) {
+        delete deb;
+        deb = nullptr;
+    }
+    
     delete ui;
+}
+
+void Widget::on_debugbtn_clicked()
+{
+    if (!deb) {
+        // 如果窗口不存在，创建新窗口
+        deb = new debugging();
+        deb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
+        deb->show();
+    } else if (deb->isMinimized()) {
+        // 如果窗口最小化，恢复正常窗口
+        deb->showNormal();
+        deb->raise();
+        deb->activateWindow();
+    } else if (!deb->isVisible()) {
+        // 如果窗口隐藏，显示窗口（使用showNormal确保不是最大化状态）
+        deb->showNormal();
+        deb->raise();
+        deb->activateWindow();
+    } else {
+        // 如果窗口已经显示，将其置于前台
+        deb->raise();
+        deb->activateWindow();
+    }
 }

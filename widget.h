@@ -55,6 +55,10 @@ private:
     void initCharts();
     //界面初始化函数
     void init();
+    // 简单的输入验证函数，检查是否为有效数字
+    bool isValidNumber(const QString &input);
+    // 检查所有报警阈值
+    void checkAlarmThresholds(const SensorData &data);
 
 private slots:
     void do_msgnewConnection(qintptr socket);//有客户端连接到消息服务器
@@ -63,5 +67,6 @@ private slots:
     void on_lightbtn_clicked();//开关灯按钮点击事件
     void on_waterbtn_clicked();//浇水按钮点击事件
     void on_exitbtn_clicked();//系统关闭按钮点击事件
+    void on_debugbtn_clicked();//调试按钮点击事件
 };
 #endif // WIDGET_H
