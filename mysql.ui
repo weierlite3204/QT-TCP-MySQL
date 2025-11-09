@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="status">
      <property name="text">
       <string>数据库管理平台</string>
      </property>

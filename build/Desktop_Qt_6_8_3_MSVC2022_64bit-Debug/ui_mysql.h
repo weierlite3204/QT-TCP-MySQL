@@ -30,7 +30,7 @@ class Ui_Mysql
 {
 public:
     QVBoxLayout *verticalLayout_4;
-    QLabel *label;
+    QLabel *status;
     QTableWidget *datetable;
     QHBoxLayout *horizontalLayout;
     QFrame *frame;
@@ -69,11 +69,11 @@ public:
         Mysql->resize(890, 665);
         verticalLayout_4 = new QVBoxLayout(Mysql);
         verticalLayout_4->setObjectName("verticalLayout_4");
-        label = new QLabel(Mysql);
-        label->setObjectName("label");
-        label->setAlignment(Qt::AlignmentFlag::AlignCenter);
+        status = new QLabel(Mysql);
+        status->setObjectName("status");
+        status->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
-        verticalLayout_4->addWidget(label);
+        verticalLayout_4->addWidget(status);
 
         datetable = new QTableWidget(Mysql);
         datetable->setObjectName("datetable");
@@ -239,7 +239,7 @@ public:
     void retranslateUi(QWidget *Mysql)
     {
         Mysql->setWindowTitle(QCoreApplication::translate("Mysql", "Form", nullptr));
-        label->setText(QCoreApplication::translate("Mysql", "\346\225\260\346\215\256\345\272\223\347\256\241\347\220\206\345\271\263\345\217\260", nullptr));
+        status->setText(QCoreApplication::translate("Mysql", "\346\225\260\346\215\256\345\272\223\347\256\241\347\220\206\345\271\263\345\217\260", nullptr));
         label_2->setText(QCoreApplication::translate("Mysql", "\346\227\245\346\234\237\346\237\245\350\257\242", nullptr));
         label_3->setText(QCoreApplication::translate("Mysql", "\345\274\200\345\247\213", nullptr));
         inquire->setText(QCoreApplication::translate("Mysql", "\346\237\245\350\257\242", nullptr));

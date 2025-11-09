@@ -15,6 +15,7 @@ CONFIG += c++17
 
 SOURCES += \
     debugging.cpp \
+    databaseworker.cpp \
     main.cpp \
     msgworker.cpp \
     mysql.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
     widget.cpp
 
 HEADERS += \
+    databaseworker.h \
     debugging.h \
     msgworker.h \
     mysql.h \

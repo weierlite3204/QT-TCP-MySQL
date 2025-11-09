@@ -1,8 +1,9 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include "ui_widget.h"
 #include <QNetworkInterface>
 #include <QMessageBox>
 #include <QTimer>
+#include <QDebug>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -134,6 +135,11 @@ void Widget::init()
     deb = new debugging();
     deb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
     
+    // 创建MySQL窗口并显示以确保数据库连接建立
+    mysqldb = new Mysql();
+    mysqldb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
+    mysqldb->show(); // 自动显示数据库窗口，建立连接
+    
     msgserver=new MyTcpServer(this);//创建Tcp服务器对象
     //QHostAddress::Any //双栈任意地址。以这种地址绑定的套接字将同时监听两个端口。 一。
     msgserver->listen(QHostAddress::Any,port);//监听端口
@@ -185,7 +191,7 @@ void Widget::init()
     });
 }
 
-// 简单的输入验证函数，检查是否为有效数字
+// 简单的输入验证函数，检查报警阈值是否为有效数字
 bool Widget::isValidNumber(const QString &input)
 {
     if (input.isEmpty()) {
@@ -304,6 +310,16 @@ void Widget::showdata(SensorData data)
     // 调用报警阈值检查函数
     checkAlarmThresholds(data);
     
+    // 存储数据到数据库
+    qDebug() << "[Widget] 准备存储数据到数据库";
+    if (mysqldb) {
+        qDebug() << "[Widget] mysqldb对象存在，调用storeDataToDatabase方法";
+        mysqldb->storeDataToDatabase(data.atemp, data.ahumi, data.oxygen, data.stemp, data.shumi2, data.light);
+        qDebug() << "[Widget] storeDataToDatabase方法调用完成";
+    } else {
+        qDebug() << "[Widget] mysqldb对象不存在，无法存储数据";
+    }
+    
     // 获取当前时间
     double currentTime = QDateTime::currentDateTime().toMSecsSinceEpoch() / 1000.0;
     
@@ -365,6 +381,7 @@ void Widget::showdata(SensorData data)
     customPlot2->replot(QCustomPlot::rpQueuedReplot);
 }
 
+//端口号改变
 void Widget::portchange()
 {
     // 获取用户输入的端口号
@@ -408,7 +425,7 @@ void Widget::portchange()
         msgserver->listen(QHostAddress::Any, port);
     }
 }
-
+//开关灯按钮按下
 void Widget::on_lightbtn_clicked()
 {
     // 切换灯的状态
@@ -427,7 +444,7 @@ void Widget::on_lightbtn_clicked()
         // 这里可以添加实际控制关灯的代码，例如发送指令到下位机
     }
 }
-
+//浇水按钮按下
 void Widget::on_waterbtn_clicked()
 {
     // 如果当前是关闭状态，点击要开始浇水
@@ -458,7 +475,7 @@ void Widget::on_waterbtn_clicked()
         // 这里可以添加实际控制关水的代码，例如发送指令到下位机
     }
 }
-
+//退出系统按钮按下
 void Widget::on_exitbtn_clicked()
 {
     // 如果正在浇水，立即关水
@@ -470,6 +487,56 @@ void Widget::on_exitbtn_clicked()
     
     // 退出整个系统
     QApplication::quit();
+}
+
+//调试按钮按下
+void Widget::on_debugbtn_clicked()
+{
+    if (!deb) {
+        // 如果窗口不存在，创建新窗口
+        deb = new debugging();
+        deb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
+        deb->show();
+    } else if (deb->isMinimized()) {
+        // 如果窗口最小化，恢复正常窗口
+        deb->showNormal();
+        deb->raise();
+        deb->activateWindow();
+    } else if (!deb->isVisible()) {
+        // 如果窗口隐藏，显示窗口（使用showNormal确保不是最大化状态）
+        deb->showNormal();
+        deb->raise();
+        deb->activateWindow();
+    } else {
+        // 如果窗口已经显示，将其置于前台
+        deb->raise();
+        deb->activateWindow();
+    }
+}
+
+//数据库按钮按下
+void Widget::on_mysqlbtn_clicked()
+{
+    if (!mysqldb) {
+        // 如果窗口不存在，创建新窗口
+        mysqldb = new Mysql();
+        mysqldb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
+        mysqldb->show();
+    } else if (mysqldb->isMinimized()) {
+        // 如果窗口最小化，恢复正常窗口
+        mysqldb->showNormal();
+        mysqldb->raise();
+        mysqldb->activateWindow();
+    } else if (!mysqldb->isVisible()) {
+        // 如果窗口隐藏，显示窗口（使用showNormal确保不是最大化状态）
+        mysqldb->showNormal();
+        mysqldb->raise();
+        mysqldb->activateWindow();
+    } else {
+        // 如果窗口已经显示，将其置于前台
+        mysqldb->raise();
+        mysqldb->activateWindow();
+    }
 }
 
 Widget::~Widget()
@@ -503,29 +570,26 @@ Widget::~Widget()
         deb = nullptr;
     }
     
+    // 安全删除MySQL窗口 - 在主窗口关闭时正确断开数据库连接
+    if (mysqldb) {
+        try {
+            // 调用Mysql类提供的公共方法断开数据库连接
+            mysqldb->disconnectDatabase();
+            
+            // 给一点额外时间确保所有事件都已处理
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+            
+            // 安全删除MySQL窗口对象
+            delete mysqldb;
+            mysqldb = nullptr;
+        } catch (...) {
+            // 捕获异常，避免程序崩溃
+            delete mysqldb;
+            mysqldb = nullptr;
+        }
+    }
+    
+    // 释放UI对象
     delete ui;
 }
 
-void Widget::on_debugbtn_clicked()
-{
-    if (!deb) {
-        // 如果窗口不存在，创建新窗口
-        deb = new debugging();
-        deb->setAttribute(Qt::WA_DeleteOnClose, false); // 关闭时不自动删除
-        deb->show();
-    } else if (deb->isMinimized()) {
-        // 如果窗口最小化，恢复正常窗口
-        deb->showNormal();
-        deb->raise();
-        deb->activateWindow();
-    } else if (!deb->isVisible()) {
-        // 如果窗口隐藏，显示窗口（使用showNormal确保不是最大化状态）
-        deb->showNormal();
-        deb->raise();
-        deb->activateWindow();
-    } else {
-        // 如果窗口已经显示，将其置于前台
-        deb->raise();
-        deb->activateWindow();
-    }
-}

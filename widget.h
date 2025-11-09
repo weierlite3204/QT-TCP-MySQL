@@ -1,4 +1,4 @@
-﻿#ifndef WIDGET_H
+#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
@@ -8,6 +8,7 @@
 #include "mytcpserver.h"
 #include "msgworker.h"
 #include "debugging.h"
+#include "mysql.h"
 #include "sensordata.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +32,7 @@ private:
     unsigned int port=1210;//端口号
     MyTcpServer *msgserver=NULL;//tcp服务
     debugging *deb=NULL;//调试窗口
+    Mysql *mysqldb=NULL;//MySQL窗口
     bool light = false;//开关灯
     bool water = false;//浇水
 
@@ -68,5 +70,6 @@ private slots:
     void on_waterbtn_clicked();//浇水按钮点击事件
     void on_exitbtn_clicked();//系统关闭按钮点击事件
     void on_debugbtn_clicked();//调试按钮点击事件
+    void on_mysqlbtn_clicked();//数据库按钮点击事件
 };
 #endif // WIDGET_H
