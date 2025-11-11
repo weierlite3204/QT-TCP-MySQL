@@ -5,6 +5,10 @@ INCLUDEPATH += $$PWD
 HEADERS += $$PWD/qcustomplot.h
 SOURCES += $$PWD/qcustomplot.cpp
 
+# 添加Qxlsx支持
+include($$PWD/QXlsx/QXlsx.pri)
+INCLUDEPATH += $$PWD/QXlsx
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17

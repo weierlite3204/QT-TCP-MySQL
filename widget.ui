@@ -29,26 +29,13 @@
       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
        <property name="spacing">
         <number>0</number>
        </property>
        <property name="sizeConstraint">
         <enum>QLayout::SizeConstraint::SetFixedSize</enum>
        </property>
-       <item>
-        <widget class="QToolButton" name="openbtn">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>开启关闭</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QPushButton" name="lightbtn">
          <property name="minimumSize">
@@ -76,19 +63,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="autobtn">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>自动（客机模式）</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="mysqlbtn">
          <property name="minimumSize">
           <size>
@@ -111,6 +85,19 @@
          </property>
          <property name="text">
           <string>调试</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportbtn">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>导出（xlsx）</string>
          </property>
         </widget>
        </item>
@@ -194,13 +181,6 @@
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QToolButton" name="modebtn">
-                   <property name="text">
-                    <string>.....</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item>
                   <widget class="QLabel" name="patternlab">
                    <property name="text">

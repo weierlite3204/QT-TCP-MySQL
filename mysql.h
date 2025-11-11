@@ -1,4 +1,4 @@
-#ifndef MYSQL_H
+﻿#ifndef MYSQL_H
 #define MYSQL_H
 
 #include <QWidget>   // Qt窗口基类
@@ -36,11 +36,19 @@ public:
     // 供主窗口调用，将传感器数据存储到数据库中
     void storeDataToDatabase(double airTemp, double airHumidity, double oxygenContent, double soilTemp, double soilHumidity, double lightIntensity);
 
+    //检查数据库连接
+    bool chackconnect();
+
+    //获取数据库工作对象
+    DatabaseWorker* getdataworker();
+
 signals:
     // 连接数据库信号 - 触发数据库工作线程中的连接操作
     void connectToDatabaseSignal();
     // 断开数据库连接信号 - 触发数据库工作线程中的断开操作
     void disconnectFromDatabase();
+
+
 
 private:
     Ui::Mysql *ui;

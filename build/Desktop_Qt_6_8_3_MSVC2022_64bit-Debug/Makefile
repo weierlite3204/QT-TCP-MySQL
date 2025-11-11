@@ -419,6 +419,7 @@ Makefile: ..\..\SerialAndTCP.pro ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\toolchain.prf \
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\default_pre.prf \
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\win32\default_pre.prf \
+		..\..\QXlsx\QXlsx.pri \
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\resolve_config.prf \
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\exclusive_builds_post.prf \
 		..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\default_post.prf \
@@ -793,6 +794,7 @@ Makefile: ..\..\SerialAndTCP.pro ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\toolchain.prf:
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\default_pre.prf:
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\win32\default_pre.prf:
+..\..\QXlsx\QXlsx.pri:
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\resolve_config.prf:
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\exclusive_builds_post.prf:
 ..\..\..\..\6.8.3\msvc2022_64\mkspecs\features\default_post.prf:

@@ -75,6 +75,22 @@ void Mysql::connectToDatabase()
     emit connectToDatabaseSignal();
 }
 
+bool Mysql::chackconnect()
+{
+    if(dbWorker && dbThread && dbThread->isRunning())
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
+DatabaseWorker* Mysql::getdataworker()
+{
+    return dbWorker;
+}
+
 // 处理数据库连接状态变化
 void Mysql::on_connectionStatusChanged(bool connected, const QString &message)
 {
@@ -143,7 +159,7 @@ void Mysql::closeEvent(QCloseEvent *event)
 // 公共方法：断开数据库连接
 void Mysql::disconnectDatabase()
 {
-    if (dbWorker && dbThread && dbThread->isRunning()) {
+    if (chackconnect()) {
         QMetaObject::invokeMethod(dbWorker, "disconnectFromDatabase", Qt::BlockingQueuedConnection);
     }
 }
@@ -151,7 +167,7 @@ void Mysql::disconnectDatabase()
 // 公共方法：存储温室环境数据到数据库
 void Mysql::storeDataToDatabase(double airTemp, double airHumidity, double oxygenContent, double soilTemp, double soilHumidity, double lightIntensity)
 {
-    if (dbWorker && dbThread && dbThread->isRunning()) {
+    if (chackconnect()) {
         // 使用BlockingQueuedConnection确保线程安全和操作完成
         bool success = QMetaObject::invokeMethod(dbWorker, "storeGreenhouseData", 
                                  Qt::BlockingQueuedConnection,
@@ -181,7 +197,7 @@ void Mysql::on_showall_clicked()
     qDebug() << "[Mysql] showall按钮被点击";
     
     // 使用数据库工作线程查询数据
-    if (dbWorker && dbThread && dbThread->isRunning()) {
+    if (chackconnect()) {
         qDebug() << "[Mysql] 发送查询信号";
         
         // 使用信号槽机制调用数据库工作线程的查询方法
@@ -227,7 +243,7 @@ void Mysql::on_inquire_clicked()
     }
     
     // 使用数据库工作线程进行时间范围查询
-    if (dbWorker && dbThread && dbThread->isRunning()) {
+    if (chackconnect()) {
         ui->status->setText("正在查询数据...");
         
         // 使用信号槽机制调用数据库工作线程的查询方法
@@ -325,7 +341,7 @@ void Mysql::on_dateinquire_clicked()
     }
     
     // 使用数据库工作线程进行值范围查询
-    if (dbWorker && dbThread && dbThread->isRunning()) {
+    if (chackconnect()) {
         ui->status->setText(QString("正在查询%1在%2到%3之间的数据...")
                                    .arg(attributeName)
                                    .arg(minValue)

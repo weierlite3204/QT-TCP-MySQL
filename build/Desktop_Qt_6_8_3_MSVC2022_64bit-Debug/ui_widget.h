@@ -20,7 +20,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSpinBox>
-#include <QtWidgets/QToolButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -32,12 +31,11 @@ public:
     QVBoxLayout *verticalLayout_7;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout;
-    QToolButton *openbtn;
     QPushButton *lightbtn;
     QPushButton *waterbtn;
-    QPushButton *autobtn;
     QPushButton *mysqlbtn;
     QPushButton *debugbtn;
+    QPushButton *exportbtn;
     QPushButton *exitbtn;
     QWidget *widget;
     QVBoxLayout *verticalLayout_10;
@@ -52,7 +50,6 @@ public:
     QLabel *label_3;
     QLineEdit *portlineEdit;
     QHBoxLayout *horizontalLayout_2;
-    QToolButton *modebtn;
     QLabel *patternlab;
     QFrame *line_2;
     QLabel *connectlab;
@@ -125,12 +122,6 @@ public:
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName("horizontalLayout");
         horizontalLayout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
-        openbtn = new QToolButton(Widget);
-        openbtn->setObjectName("openbtn");
-        openbtn->setMinimumSize(QSize(0, 40));
-
-        horizontalLayout->addWidget(openbtn);
-
         lightbtn = new QPushButton(Widget);
         lightbtn->setObjectName("lightbtn");
         lightbtn->setMinimumSize(QSize(0, 40));
@@ -143,12 +134,6 @@ public:
 
         horizontalLayout->addWidget(waterbtn);
 
-        autobtn = new QPushButton(Widget);
-        autobtn->setObjectName("autobtn");
-        autobtn->setMinimumSize(QSize(0, 40));
-
-        horizontalLayout->addWidget(autobtn);
-
         mysqlbtn = new QPushButton(Widget);
         mysqlbtn->setObjectName("mysqlbtn");
         mysqlbtn->setMinimumSize(QSize(0, 40));
@@ -160,6 +145,12 @@ public:
         debugbtn->setMinimumSize(QSize(0, 40));
 
         horizontalLayout->addWidget(debugbtn);
+
+        exportbtn = new QPushButton(Widget);
+        exportbtn->setObjectName("exportbtn");
+        exportbtn->setMinimumSize(QSize(0, 40));
+
+        horizontalLayout->addWidget(exportbtn);
 
         exitbtn = new QPushButton(Widget);
         exitbtn->setObjectName("exitbtn");
@@ -218,11 +209,6 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName("horizontalLayout_2");
-        modebtn = new QToolButton(frame);
-        modebtn->setObjectName("modebtn");
-
-        horizontalLayout_2->addWidget(modebtn);
-
         patternlab = new QLabel(frame);
         patternlab->setObjectName("patternlab");
 
@@ -570,18 +556,16 @@ public:
     void retranslateUi(QWidget *Widget)
     {
         Widget->setWindowTitle(QCoreApplication::translate("Widget", "Widget", nullptr));
-        openbtn->setText(QCoreApplication::translate("Widget", "\345\274\200\345\220\257\345\205\263\351\227\255", nullptr));
         lightbtn->setText(QCoreApplication::translate("Widget", "\345\274\200\347\201\257", nullptr));
         waterbtn->setText(QCoreApplication::translate("Widget", "\346\265\207\346\260\264", nullptr));
-        autobtn->setText(QCoreApplication::translate("Widget", "\350\207\252\345\212\250\357\274\210\345\256\242\346\234\272\346\250\241\345\274\217\357\274\211", nullptr));
         mysqlbtn->setText(QCoreApplication::translate("Widget", "\346\225\260\346\215\256\345\272\223", nullptr));
         debugbtn->setText(QCoreApplication::translate("Widget", "\350\260\203\350\257\225", nullptr));
+        exportbtn->setText(QCoreApplication::translate("Widget", "\345\257\274\345\207\272\357\274\210xlsx\357\274\211", nullptr));
         exitbtn->setText(QCoreApplication::translate("Widget", "\351\200\200\345\207\272\347\263\273\347\273\237", nullptr));
         label->setText(QCoreApplication::translate("Widget", "\347\275\221\347\273\234\350\277\236\346\216\245", nullptr));
         label_2->setText(QCoreApplication::translate("Widget", "IP\345\234\260\345\235\200", nullptr));
         label_3->setText(QCoreApplication::translate("Widget", "\347\253\257\345\217\243\345\217\267", nullptr));
         portlineEdit->setText(QCoreApplication::translate("Widget", "1210", nullptr));
-        modebtn->setText(QCoreApplication::translate("Widget", ".....", nullptr));
         patternlab->setText(QCoreApplication::translate("Widget", "\344\270\273\346\234\272\346\250\241\345\274\217", nullptr));
         connectlab->setText(QCoreApplication::translate("Widget", "\346\234\252\350\277\236\346\216\245", nullptr));
         label_16->setText(QCoreApplication::translate("Widget", "\346\225\260\346\215\256\347\233\221\346\216\247", nullptr));

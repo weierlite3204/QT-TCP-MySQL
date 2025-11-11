@@ -1,9 +1,10 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
 #include <QDateTime>
 #include <QVBoxLayout>
+#include <QFileDialog>
 #include "qcustomplot.h"
 #include "mytcpserver.h"
 #include "msgworker.h"
@@ -51,7 +52,7 @@ private:
     QVector<double> soilHumidityData; // 土壤湿度数据
     QVector<double> lightData; // 光照强度数据
 
-    const int maxDataPoints = 20; // 最大数据点数量
+    const int maxDataPoints = 300; // 最大数据点数量
 
     // 初始化图表函数
     void initCharts();
@@ -71,5 +72,18 @@ private slots:
     void on_exitbtn_clicked();//系统关闭按钮点击事件
     void on_debugbtn_clicked();//调试按钮点击事件
     void on_mysqlbtn_clicked();//数据库按钮点击事件
+    void on_exportbtn_clicked();//把数据导出为xlsx格式
+    void onQueryResultsReady(bool success, const QList<QVariantList> &results, const QString &message); // 处理数据库查询结果的槽函数
+    
+private:
+    // 发送命令到下位机并在调试界面显示
+    void sendCommand(const QString &command);
+    
+protected:
+    // 重写窗口关闭事件处理函数
+    void closeEvent(QCloseEvent *event);
+    
+signals:
+    void senddata(QByteArray data);
 };
 #endif // WIDGET_H

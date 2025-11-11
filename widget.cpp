@@ -4,6 +4,14 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QDebug>
+#include <QFileDialog>
+#include <QStringList>
+// 引入QXlsx库
+#include "QXlsx/header/xlsxdocument.h"
+#include "QXlsx/header/xlsxformat.h"
+#include "QXlsx/header/xlsxchart.h"
+#include "QXlsx/header/xlsxcellrange.h"
+using namespace QXlsx;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -424,7 +432,18 @@ void Widget::portchange()
         msgserver->listen(QHostAddress::Any, port);
     }
 }
-//开关灯按钮按下
+
+// 发送命令到下位机并在调试界面显示
+void Widget::sendCommand(const QString &command)
+{
+    QByteArray commandData = command.toUtf8();
+    emit senddata(commandData);
+        // 在调试界面显示发送的消息
+        if (deb) {
+            deb->showdata("发送: " + command);
+        }
+}
+
 void Widget::on_lightbtn_clicked()
 {
     // 切换灯的状态
@@ -435,12 +454,14 @@ void Widget::on_lightbtn_clicked()
         QString rayLabelText = ui->raylabel->text();
         ui->lightbtn->setText(rayLabelText);
         
-        // 这里可以添加实际控制开灯的代码，例如发送指令到下位机
+        // 发送开灯指令到下位机
+        sendCommand("lightON");
     } else {
         // 关灯状态：按钮文本显示"开灯"
         ui->lightbtn->setText("开灯");
         
-        // 这里可以添加实际控制关灯的代码，例如发送指令到下位机
+        // 发送关灯指令到下位机
+        sendCommand("lightOFF");
     }
 }
 //浇水按钮按下
@@ -455,37 +476,69 @@ void Widget::on_waterbtn_clicked()
         water = true;
         ui->waterbtn->setText("关水");
         
+        // 发送浇水指令到下位机
+        sendCommand("waterON");
+        
         // 只有当浇水时间大于0秒时，才设置定时器自动关水
         if (seconds > 0) {
             QTimer::singleShot(seconds * 1000, this, [this]() {
             if (water) { // 只有在仍然浇水状态时才执行自动关水
                 water = false;
                 ui->waterbtn->setText("浇水");
-                // 这里可以添加实际控制关水的代码，例如发送指令到下位机
+                
+                // 发送关水指令到下位机
+                sendCommand("waterOFF");
             }
         });
         }
-        
-        // 这里可以添加实际控制浇水的代码，例如发送指令到下位机
     } else {
         // 停止浇水
         water = false;
         ui->waterbtn->setText("浇水");
-        // 这里可以添加实际控制关水的代码，例如发送指令到下位机
+        
+        // 发送关水指令到下位机
+        sendCommand("waterOFF");
     }
 }
 //退出系统按钮按下
-void Widget::on_exitbtn_clicked()
+// 窗口关闭事件处理函数
+void Widget::closeEvent(QCloseEvent *event)
 {
+    // 执行与退出按钮相同的关闭逻辑
     // 如果正在浇水，立即关水
     if (water) {
         water = false;
         ui->waterbtn->setText("浇水");
-        // 这里可以添加实际控制关水的代码，例如发送指令到下位机
+        
+        // 发送关水指令到下位机
+        sendCommand("waterOFF");
+    }
+    
+    // 关闭debugging界面（如果存在）
+    if (deb) {
+        deb->close();
+        delete deb;
+        deb = nullptr;
+    }
+    
+    // 关闭mysql界面（如果存在）
+    if (mysqldb) {
+        mysqldb->close();
+        delete mysqldb;
+        mysqldb = nullptr;
     }
     
     // 退出整个系统
     QApplication::quit();
+    
+    // 接受关闭事件
+    event->accept();
+}
+
+void Widget::on_exitbtn_clicked()
+{
+    // 调用窗口关闭事件处理函数
+    close();
 }
 
 //调试按钮按下
@@ -538,9 +591,199 @@ void Widget::on_mysqlbtn_clicked()
     }
 }
 
-void Widget::on_exportbtn_clicked()
+void Widget::on_exportbtn_clicked() // 导出按钮点击事件处理函数
 {
+    qDebug() << "[导出数据] 开始从数据库导出图表数据到Excel文件"; // 输出调试信息，指示导出开始
+    
+    
+    // 确保数据库工作线程正在运行
+    if (mysqldb->chackconnect()) {
+        // 连接数据库查询结果信号到当前类的槽函数
+        connect(mysqldb->getdataworker(), &DatabaseWorker::queryResultsReady, this, &Widget::onQueryResultsReady);
+        
+        qDebug() << "[导出数据] 请求查询所有数据库数据"; // 输出调试信息
+        
+        // 使用信号槽机制调用数据库工作线程的查询所有数据方法
+        QMetaObject::invokeMethod(mysqldb->getdataworker(), "queryAllGreenhouseData", Qt::QueuedConnection);
+        
+    } else {
+        qDebug() << "[导出数据] 数据库工作线程不可用"; // 输出调试信息
+        QMessageBox::warning(this, "导出失败", "数据库工作线程不可用，请先连接数据库");
+    }
+}
 
+void Widget::onQueryResultsReady(bool success, const QList<QVariantList> &results, const QString &message)
+{
+    qDebug() << "[导出数据] 收到数据库查询结果: 成功=" << success << ", 记录数=" << results.size(); // 输出调试信息
+
+    // 断开信号连接，避免重复处理
+    disconnect(mysqldb->getdataworker(), &DatabaseWorker::queryResultsReady, this, &Widget::onQueryResultsReady);
+    
+    
+    if (!success || results.isEmpty()) {
+        QMessageBox::warning(this, "导出失败", "查询数据失败或没有数据可供导出");
+        return;
+    }
+    
+    // 创建一个新的Excel文档对象
+    Document xlsx;
+    
+    // 创建表头格式对象
+    Format headerFormat;
+    headerFormat.setFontBold(true); // 设置表头字体为粗体
+    headerFormat.setHorizontalAlignment(Format::AlignHCenter); // 设置表头水平居中对齐
+    headerFormat.setVerticalAlignment(Format::AlignVCenter); // 设置表头垂直居中对齐
+    headerFormat.setBorderStyle(Format::BorderThin); // 设置表头边框为细边框
+    
+    // 创建数据单元格格式对象
+    Format dataFormat;
+    dataFormat.setBorderStyle(Format::BorderThin); // 设置数据单元格边框为细边框
+    
+    // 首先添加空气参数工作表
+    xlsx.addSheet("空气参数");
+    xlsx.selectSheet("空气参数");
+    
+    // 写入表头
+    xlsx.write("A1", "时间", headerFormat);
+    xlsx.write("B1", "空气温度(°C)", headerFormat);
+    xlsx.write("C1", "空气湿度(%)", headerFormat);
+    xlsx.write("D1", "氧气浓度(%)", headerFormat);
+    
+    int airDataRowCount = 0; // 计数器，用于记录实际写入的空气参数数据行数
+    
+    // 遍历查询结果，写入空气参数数据
+    for (int i = 0; i < results.size(); ++i) {
+        const QVariantList &row = results.at(i);
+        if (row.size() >= 5) { // 确保有足够的数据列
+            int excelRow = i + 2; // Excel行号从2开始
+            
+            // 从数据库结果中提取数据
+            QString timeString = row.at(1).toDateTime().toString("yyyy-MM-dd HH:mm:ss"); // 时间
+            double airTemp = row.at(2).toDouble(); // 空气温度
+            double airHumidity = row.at(3).toDouble(); // 空气湿度
+            double oxygenContent = row.at(4).toDouble(); // 氧气浓度
+            
+            // 写入Excel
+            xlsx.write(excelRow, 1, timeString, dataFormat);
+            xlsx.write(excelRow, 2, airTemp, dataFormat);
+            xlsx.write(excelRow, 3, airHumidity, dataFormat);
+            xlsx.write(excelRow, 4, oxygenContent, dataFormat);
+            
+            airDataRowCount++;
+        }
+    }
+    
+    // 如果有数据，创建空气参数图表
+    if (airDataRowCount > 0) {
+        int chartRow = airDataRowCount + 3; // 图表位置在数据下方3行
+        Chart *airChart = xlsx.insertChart(chartRow, 1, QSize(800, 400)); // 插入图表
+        
+        airChart->setChartType(Chart::CT_LineChart); // 设置为折线图
+        airChart->setChartTitle("空气参数变化趋势"); // 设置图表标题
+        
+        // 添加温度数据系列（使用时间作为X轴）
+        CellRange tempRange("A2:B" + QString::number(airDataRowCount + 1));
+        airChart->addSeries(tempRange, nullptr, false, true);
+        
+        // 添加湿度数据系列
+        CellRange humidityRange("A2:A" + QString::number(airDataRowCount + 1) + ",C2:C" + QString::number(airDataRowCount + 1));
+        airChart->addSeries(humidityRange, nullptr, false, true);
+        
+        // 添加氧气浓度数据系列
+        CellRange oxygenRange("A2:A" + QString::number(airDataRowCount + 1) + ",D2:D" + QString::number(airDataRowCount + 1));
+        airChart->addSeries(oxygenRange, nullptr, false, true);
+        
+        // 设置图表属性
+        airChart->setChartLegend(Chart::Top, false); // 图例在顶部
+        airChart->setAxisTitle(Chart::Bottom, "时间"); // X轴标题
+        airChart->setAxisTitle(Chart::Left, "数值"); // Y轴标题
+    }
+    
+    // 接下来添加土壤参数工作表
+    xlsx.addSheet("土壤参数");
+    xlsx.selectSheet("土壤参数");
+    
+    // 写入表头
+    xlsx.write("A1", "时间", headerFormat);
+    xlsx.write("B1", "土壤温度(°C)", headerFormat);
+    xlsx.write("C1", "土壤湿度(%)", headerFormat);
+    xlsx.write("D1", "光照强度(%)", headerFormat);
+    
+    int soilDataRowCount = 0; // 计数器，用于记录实际写入的土壤参数数据行数
+    
+    // 遍历查询结果，写入土壤参数数据
+    for (int i = 0; i < results.size(); ++i) {
+        const QVariantList &row = results.at(i);
+        if (row.size() >= 8) { // 确保有足够的数据列
+            int excelRow = i + 2; // Excel行号从2开始
+            
+            // 从数据库结果中提取数据
+            QString timeString = row.at(1).toDateTime().toString("yyyy-MM-dd HH:mm:ss"); // 时间
+            double soilTemp = row.at(5).toDouble(); // 土壤温度
+            double soilHumidity = row.at(6).toDouble(); // 土壤湿度
+            double lightIntensity = row.at(7).toDouble(); // 光照强度
+            
+            // 写入Excel
+            xlsx.write(excelRow, 1, timeString, dataFormat);
+            xlsx.write(excelRow, 2, soilTemp, dataFormat);
+            xlsx.write(excelRow, 3, soilHumidity, dataFormat);
+            xlsx.write(excelRow, 4, lightIntensity, dataFormat);
+            
+            soilDataRowCount++;
+        }
+    }
+    
+    // 如果有数据，创建土壤参数图表
+    if (soilDataRowCount > 0) {
+        int chartRow = soilDataRowCount + 3; // 图表位置在数据下方3行
+        Chart *soilChart = xlsx.insertChart(chartRow, 1, QSize(800, 400)); // 插入图表
+        
+        soilChart->setChartType(Chart::CT_LineChart); // 设置为折线图
+        soilChart->setChartTitle("土壤参数变化趋势"); // 设置图表标题
+        
+        // 添加土壤温度数据系列
+        CellRange soilTempRange("A2:B" + QString::number(soilDataRowCount + 1));
+        soilChart->addSeries(soilTempRange, nullptr, false, true);
+        
+        // 添加土壤湿度数据系列
+        CellRange soilHumidityRange("A2:A" + QString::number(soilDataRowCount + 1) + ",C2:C" + QString::number(soilDataRowCount + 1));
+        soilChart->addSeries(soilHumidityRange, nullptr, false, true);
+        
+        // 添加光照强度数据系列
+        CellRange lightRange("A2:A" + QString::number(soilDataRowCount + 1) + ",D2:D" + QString::number(soilDataRowCount + 1));
+        soilChart->addSeries(lightRange, nullptr, false, true);
+        
+        // 设置图表属性
+        soilChart->setChartLegend(Chart::Top, false); // 图例在顶部
+        soilChart->setAxisTitle(Chart::Bottom, "时间"); // X轴标题
+        soilChart->setAxisTitle(Chart::Left, "数值"); // Y轴标题
+    }
+    
+    // 打开文件保存对话框，让用户选择保存位置
+    QString fileName = QFileDialog::getSaveFileName(
+        this, 
+        "导出Excel文件", 
+        QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"), 
+        "Excel Files (*.xlsx);;All Files (*)"
+    );
+    
+    if (!fileName.isEmpty()) {
+        // 确保文件扩展名为.xlsx
+        if (!fileName.endsWith(".xlsx", Qt::CaseInsensitive)) {
+            fileName += ".xlsx";
+        }
+        
+        // 保存Excel文件
+        if (xlsx.saveAs(fileName)) {
+            qDebug() << "[导出数据] 成功保存Excel文件: " << fileName;
+            QMessageBox::information(this, "导出成功", QString("数据已成功导出到\n%1").arg(fileName));
+        } else {
+            qDebug() << "[导出数据] 保存Excel文件失败";
+            QMessageBox::warning(this, "导出失败", "无法保存Excel文件，请检查文件路径和权限");
+        }
+    } else {
+        qDebug() << "[导出数据] 用户取消了导出操作";
+    }
 }
 
 Widget::~Widget()
